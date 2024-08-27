@@ -1,7 +1,6 @@
 package gocheckers
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -123,8 +122,6 @@ func TestGenerateMovesWithKing(t *testing.T) {
 
 	moves := board.GenerateMoves()
 
-	fmt.Println(moves)
-
 	if len(moves) != 1 {
 		t.Errorf("Expected 1 move, got %d", len(moves))
 		t.FailNow()
@@ -158,8 +155,6 @@ func TestGenerateMovesWithKing(t *testing.T) {
 
 	moves = board.GenerateMoves()
 
-	fmt.Println(moves)
-
 	numMoves := len(moves)
 
 	if numMoves != 1 {
@@ -183,4 +178,156 @@ func TestGenerateMovesWithKing(t *testing.T) {
 		t.Errorf("Expected 24 in position 2, got %d", moves[0][2])
 	}
 
+}
+
+func TestSingleOptionMoves(t *testing.T) {
+
+	type boardInfo struct {
+		position [][]int
+		turn     int
+	}
+
+	positions := []boardInfo{
+		{[][]int{
+			{0, 0, 0, 3, 0, 0, 0, 0},
+			{0, 0, 2, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+		},
+			black,
+		},
+
+		{[][]int{
+			{0, 0, 0, 3, 0, 0, 0, 0},
+			{0, 0, 0, 0, 2, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+		},
+			black,
+		},
+
+		{[][]int{
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 1, 0, 0, 0, 0, 0, 0},
+			{4, 0, 0, 0, 0, 0, 0, 0},
+		},
+			white,
+		},
+
+		{[][]int{
+			{0, 0, 0, 3, 0, 0, 0, 0},
+			{0, 0, 2, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 1, 0, 0, 0, 0, 0, 0},
+			{0, 0, 4, 0, 0, 0, 0, 0},
+		},
+			white,
+		},
+	}
+
+	for i := 0; i < len(positions); i++ {
+		board := NewCheckersBoardFromPosition(positions[i].position, positions[i].turn, make([][]int, 0))
+
+		moves := board.GenerateMoves()
+
+		if len(moves) != 1 {
+			t.Errorf("Expected 1 move, but got %d on board index %d", len(moves), i)
+		}
+
+		if len(moves[0]) != 2 {
+			t.Errorf("Expected a single move, but got %d on board index %d", len(moves[0]), i)
+		}
+	}
+}
+
+func TestDoubleJumpToKing(t *testing.T) {
+
+	type boardInfo struct {
+		position [][]int
+		turn     int
+	}
+
+	positions := []boardInfo{
+		{[][]int{
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 2, 0, 2, 0, 0, 0},
+			{0, 0, 0, 0, 0, 1, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+		},
+			black,
+		},
+
+		{[][]int{
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 2, 0, 2, 0, 0, 0},
+			{0, 1, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+		},
+			black,
+		},
+
+		{[][]int{
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{2, 0, 0, 0, 0, 0, 0, 0},
+			{0, 1, 0, 1, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+		},
+			white,
+		},
+
+		{[][]int{
+			{0, 0, 0, 3, 0, 0, 0, 0},
+			{0, 0, 2, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 2, 0, 0, 0},
+			{0, 1, 0, 1, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0},
+		},
+			white,
+		},
+	}
+
+	for i := 0; i < len(positions); i++ {
+		board := NewCheckersBoardFromPosition(positions[i].position, positions[i].turn, make([][]int, 0))
+
+		moves := board.GenerateMoves()
+
+		if len(moves) != 1 {
+			t.Errorf("Expected 1 move, but got %d on board index %d", len(moves), i)
+		}
+
+		if len(moves[0]) != 3 {
+			t.Errorf("Expected a two moves, but got %d on board index %d", len(moves[0]), i)
+		}
+	}
 }
