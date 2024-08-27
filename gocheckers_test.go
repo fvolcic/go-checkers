@@ -331,3 +331,33 @@ func TestDoubleJumpToKing(t *testing.T) {
 		}
 	}
 }
+
+func TestMakeMove(t *testing.T) {
+	position := [][]int{
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 2, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{1, 0, 0, 0, 0, 0, 0, 0},
+	}
+
+	board := NewCheckersBoardFromPosition(position, black, make([][]int, 0))
+
+	if !board.MakeMove([]int{4, 8}) {
+		t.Errorf("Expected sucesssful move")
+	}
+
+	result := board.GetUnpaddedBoard()
+
+	if result[7][0] != empty {
+		t.Error("Expected starting square to be empty")
+	}
+
+	if result[6][1] != black {
+		t.Error("Expected next square to be black")
+	}
+
+}

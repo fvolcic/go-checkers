@@ -1,5 +1,7 @@
 package gocheckers
 
+import "math"
+
 // define an enum type
 
 // Define the different square types
@@ -579,7 +581,94 @@ func (b *CheckersBoard) GenerateMoves() [][]int {
 
 }
 
-func (b *CheckersBoard) toString() string {
+func (b *CheckersBoard) MakeMove(move []int) bool {
+	return b.makeMoveHelper(move, false)
+}
+
+func (b *CheckersBoard) makeMoveHelper(move []int, secondJump bool) bool {
+
+	possibleMoves := b.GenerateMoves()
+
+	validMove := false
+
+	for i := 0; i < len(possibleMoves); i++ {
+		if len(possibleMoves[i]) != len(move) {
+			continue
+		}
+
+		for j := 0; j < len(possibleMoves[i]); j++ {
+			if possibleMoves[i][j] != move[j] {
+				break
+			}
+
+			if j == len(possibleMoves[i])-1 {
+				validMove = true
+			}
+		}
+
+		if validMove {
+			break
+		}
+	}
+
+	if !validMove {
+		return false
+	}
+
+	startPiece := move[0]
+	nextPiece := move[1]
+
+	startRow, startCol := pieceToIndex(startPiece)
+	nextRow, nextCol := pieceToIndex(nextPiece)
+
+	if math.Abs(float64(startRow-nextRow)) == 1 {
+		b.board[nextRow][nextCol] = b.board[startRow][startCol]
+		b.board[startRow][startCol] = empty
+
+		b.moves = append(b.moves, move)
+
+		if b.turn == black {
+			b.turn = white
+		} else {
+			b.turn = black
+		}
+
+		return true
+	} else {
+		b.board[nextRow][nextCol] = b.board[startRow][startCol]
+		b.board[startRow][startCol] = empty
+
+		jumpedRow := (startRow + nextRow) / 2
+		jumpedCol := (startCol + nextCol) / 2
+
+		b.board[jumpedRow][jumpedCol] = empty
+
+		if len(move) > 2 {
+			remainingSteps := make([]int, len(move)-1)
+			for i := 1; i < len(move); i++ {
+				remainingSteps[i-1] = move[i]
+			}
+
+			b.makeMoveHelper(remainingSteps, true)
+		}
+
+		if !secondJump {
+			b.moves = append(b.moves, move)
+
+			if b.turn == black {
+				b.turn = white
+			} else {
+				b.turn = black
+			}
+
+		}
+
+		return true
+	}
+
+}
+
+func (b *CheckersBoard) ToString() string {
 
 	boardStr := ""
 
