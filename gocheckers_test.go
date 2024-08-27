@@ -1,7 +1,6 @@
 package gocheckers
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -50,8 +49,6 @@ func TestGenerateMovesSimple(t *testing.T) {
 
 	moves := board.GenerateMoves()
 
-	fmt.Println("Generated black moves ", moves)
-
 	if len(moves) != 7 {
 		t.Errorf("Expected 7 moves, got %d", len(moves))
 	}
@@ -60,10 +57,29 @@ func TestGenerateMovesSimple(t *testing.T) {
 
 	moves = board.GenerateMoves()
 
-	fmt.Println("Generated white moves ", moves)
-
 	if len(moves) != 7 {
 		t.Errorf("Expected 7 moves, got %d", len(moves))
 	}
 
+}
+
+func TestGenerateMovesFromPosition(t *testing.T) {
+	position := [][]int{
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 2, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 2, 0, 0, 0, 0, 0, 0},
+		{1, 0, 0, 0, 0, 0, 0, 0},
+	}
+
+	board := NewCheckersBoardFromPosition(position, black, make([][]int, 0))
+
+	numMoves := len(board.GenerateMoves())
+
+	if numMoves != 1 {
+		t.Errorf("Expected 1 move, got %d", numMoves)
+	}
 }

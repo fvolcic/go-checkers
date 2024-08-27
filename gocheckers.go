@@ -68,6 +68,30 @@ func NewCheckersBoard() *CheckersBoard {
 	}
 }
 
+func NewCheckersBoardFromPosition(position [][]int, turn int, moves [][]int) *CheckersBoard {
+
+	paddedBoard := make([][]int, 10)
+
+	paddedBoard[0] = []int{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
+	paddedBoard[9] = []int{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
+
+	for row := 0; row < 8; row++ {
+		paddedBoard[row+1] = make([]int, 10)
+		for col := 0; col < 8; col++ {
+			paddedBoard[row+1][0] = -1
+			paddedBoard[row+1][9] = -1
+			paddedBoard[row+1][col+1] = position[row][col]
+		}
+	}
+
+	return &CheckersBoard{
+		paddedBoard,
+		moves,
+		turn,
+	}
+
+}
+
 func (b *CheckersBoard) GenerateDeepCopy() *CheckersBoard {
 	boardCopy := make([][]int, 10)
 
@@ -104,7 +128,7 @@ func GenerateMovesForKing(piece int) [][]int {
 	return make([][]int, 0)
 }
 
-func (b *CheckersBoard) generateMovesForBlackPiece(piece int) [][]int {
+func (b *CheckersBoard) generateMovesForBlackPiece(piece int, isDoubleJump bool) [][]int {
 	var moves [][]int
 
 	row, col := pieceToIndex(piece)
@@ -117,7 +141,7 @@ func (b *CheckersBoard) generateMovesForBlackPiece(piece int) [][]int {
 	square := b.board[row-1][col-1]
 	if square != invalid {
 
-		if square == empty {
+		if square == empty && !isDoubleJump {
 			squareNumber := squareNumbers[row-1][col-1]
 			currentSquare := piece
 			move := []int{currentSquare, squareNumber}
@@ -137,7 +161,7 @@ func (b *CheckersBoard) generateMovesForBlackPiece(piece int) [][]int {
 					newBoard.board[row-2][col-2] = blackKing
 				}
 
-				newBoardMoves := newBoard.generateMovesForBlackPiece(newBoardSquare)
+				newBoardMoves := newBoard.generateMovesForBlackPiece(newBoardSquare, true)
 
 				// add the current move to new board moves (accounts for the double jump)
 				for moveIndex := 0; moveIndex < len(newBoardMoves); moveIndex++ {
@@ -174,7 +198,7 @@ func (b *CheckersBoard) generateMovesForBlackPiece(piece int) [][]int {
 					newBoard.board[row-2][col+2] = blackKing
 				}
 
-				newBoardMoves := newBoard.generateMovesForBlackPiece(newBoardSquare)
+				newBoardMoves := newBoard.generateMovesForBlackPiece(newBoardSquare, true)
 
 				// add the current move to new board moves (accounts for the double jump)
 				for moveIndex := 0; moveIndex < len(newBoardMoves); moveIndex++ {
@@ -191,7 +215,7 @@ func (b *CheckersBoard) generateMovesForBlackPiece(piece int) [][]int {
 
 }
 
-func (b *CheckersBoard) generateMovesForWhitePeice(piece int) [][]int {
+func (b *CheckersBoard) generateMovesForWhitePeice(piece int, isDoubleJump bool) [][]int {
 	var moves [][]int
 
 	row, col := pieceToIndex(piece)
@@ -204,7 +228,7 @@ func (b *CheckersBoard) generateMovesForWhitePeice(piece int) [][]int {
 	square := b.board[row+1][col-1]
 	if square != invalid {
 
-		if square == empty {
+		if square == empty && !isDoubleJump {
 			squareNumber := squareNumbers[row+1][col-1]
 			currentSquare := piece
 			move := []int{currentSquare, squareNumber}
@@ -224,7 +248,7 @@ func (b *CheckersBoard) generateMovesForWhitePeice(piece int) [][]int {
 					newBoard.board[row+2][col-2] = whiteKing
 				}
 
-				newBoardMoves := newBoard.generateMovesForWhitePeice(newBoardSquare)
+				newBoardMoves := newBoard.generateMovesForWhitePeice(newBoardSquare, true)
 
 				// add the current move to new board moves (accounts for the double jump)
 				for moveIndex := 0; moveIndex < len(newBoardMoves); moveIndex++ {
@@ -261,7 +285,7 @@ func (b *CheckersBoard) generateMovesForWhitePeice(piece int) [][]int {
 					newBoard.board[row+2][col+2] = whiteKing
 				}
 
-				newBoardMoves := newBoard.generateMovesForWhitePeice(newBoardSquare)
+				newBoardMoves := newBoard.generateMovesForWhitePeice(newBoardSquare, true)
 
 				// add the current move to new board moves (accounts for the double jump)
 				for moveIndex := 0; moveIndex < len(newBoardMoves); moveIndex++ {
@@ -283,11 +307,11 @@ func (b *CheckersBoard) generateMovesForPiece(piece int) [][]int {
 	row, col := pieceToIndex(piece)
 
 	if b.board[row][col] == black || b.board[row][col] == blackKing {
-		return b.generateMovesForBlackPiece(piece)
+		return b.generateMovesForBlackPiece(piece, false)
 	}
 
 	if b.board[row][col] == white || b.board[row][col] == whiteKing {
-		return b.generateMovesForWhitePeice(piece)
+		return b.generateMovesForWhitePeice(piece, false)
 	}
 
 	return make([][]int, 0)
