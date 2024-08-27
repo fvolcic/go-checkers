@@ -36,7 +36,9 @@ func TestGenerateMovesSimple1(t *testing.T) {
 
 	board := NewCheckersBoard()
 
-	moves := board.generateMovesForPiece(11, false)
+	hasJump := board.TurnHasJump()
+
+	moves := board.generateMovesForPiece(11, false, hasJump)
 
 	if len(moves) != 2 {
 		t.Errorf("Expected 2 movesm got %d", len(moves))
@@ -178,7 +180,7 @@ func TestGenerateMovesWithKing(t *testing.T) {
 	}
 
 	if moves[0][2] != 24 {
-		t.Errorf("Expected 22 in position 2, got %d", moves[0][2])
+		t.Errorf("Expected 24 in position 2, got %d", moves[0][2])
 	}
 
 }
