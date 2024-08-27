@@ -27,10 +27,6 @@ var (
 	}
 )
 
-func squareNumber(row, col int) int {
-	return squareNumbers[row][col]
-}
-
 func pieceToIndex(piece int) (int, int) {
 	for row := 1; row < 9; row++ {
 		for col := 1; col < 9; col++ {
@@ -108,7 +104,7 @@ func GenerateMovesForKing(piece int) [][]int {
 	return make([][]int, 0)
 }
 
-func (b *CheckersBoard) GenerateMovesForBlackPiece(piece int) [][]int {
+func (b *CheckersBoard) generateMovesForBlackPiece(piece int) [][]int {
 	var moves [][]int
 
 	row, col := pieceToIndex(piece)
@@ -141,7 +137,7 @@ func (b *CheckersBoard) GenerateMovesForBlackPiece(piece int) [][]int {
 					newBoard.board[row-2][col-2] = blackKing
 				}
 
-				newBoardMoves := newBoard.GenerateMovesForBlackPiece(newBoardSquare)
+				newBoardMoves := newBoard.generateMovesForBlackPiece(newBoardSquare)
 
 				// add the current move to new board moves (accounts for the double jump)
 				for moveIndex := 0; moveIndex < len(newBoardMoves); moveIndex++ {
@@ -178,7 +174,7 @@ func (b *CheckersBoard) GenerateMovesForBlackPiece(piece int) [][]int {
 					newBoard.board[row-2][col+2] = blackKing
 				}
 
-				newBoardMoves := newBoard.GenerateMovesForBlackPiece(newBoardSquare)
+				newBoardMoves := newBoard.generateMovesForBlackPiece(newBoardSquare)
 
 				// add the current move to new board moves (accounts for the double jump)
 				for moveIndex := 0; moveIndex < len(newBoardMoves); moveIndex++ {
@@ -195,7 +191,7 @@ func (b *CheckersBoard) GenerateMovesForBlackPiece(piece int) [][]int {
 
 }
 
-func (b *CheckersBoard) GenerateMovesForWhitePeice(piece int) [][]int {
+func (b *CheckersBoard) generateMovesForWhitePeice(piece int) [][]int {
 	var moves [][]int
 
 	row, col := pieceToIndex(piece)
@@ -228,7 +224,7 @@ func (b *CheckersBoard) GenerateMovesForWhitePeice(piece int) [][]int {
 					newBoard.board[row+2][col-2] = whiteKing
 				}
 
-				newBoardMoves := newBoard.GenerateMovesForWhitePeice(newBoardSquare)
+				newBoardMoves := newBoard.generateMovesForWhitePeice(newBoardSquare)
 
 				// add the current move to new board moves (accounts for the double jump)
 				for moveIndex := 0; moveIndex < len(newBoardMoves); moveIndex++ {
@@ -265,7 +261,7 @@ func (b *CheckersBoard) GenerateMovesForWhitePeice(piece int) [][]int {
 					newBoard.board[row+2][col+2] = whiteKing
 				}
 
-				newBoardMoves := newBoard.GenerateMovesForWhitePeice(newBoardSquare)
+				newBoardMoves := newBoard.generateMovesForWhitePeice(newBoardSquare)
 
 				// add the current move to new board moves (accounts for the double jump)
 				for moveIndex := 0; moveIndex < len(newBoardMoves); moveIndex++ {
@@ -282,16 +278,16 @@ func (b *CheckersBoard) GenerateMovesForWhitePeice(piece int) [][]int {
 
 }
 
-func (b *CheckersBoard) GenerateMovesForPiece(piece int) [][]int {
+func (b *CheckersBoard) generateMovesForPiece(piece int) [][]int {
 
 	row, col := pieceToIndex(piece)
 
 	if b.board[row][col] == black || b.board[row][col] == blackKing {
-		return b.GenerateMovesForBlackPiece(piece)
+		return b.generateMovesForBlackPiece(piece)
 	}
 
 	if b.board[row][col] == white || b.board[row][col] == whiteKing {
-		return b.GenerateMovesForWhitePeice(piece)
+		return b.generateMovesForWhitePeice(piece)
 	}
 
 	return make([][]int, 0)
@@ -306,11 +302,11 @@ func (b *CheckersBoard) GenerateMoves() [][]int {
 		for col := 0; col < 10; col++ {
 
 			if (b.board[row][col] == white || b.board[row][col] == whiteKing) && b.turn == white {
-				moves = append(moves, b.GenerateMovesForPiece(squareNumbers[row][col])...)
+				moves = append(moves, b.generateMovesForPiece(squareNumbers[row][col])...)
 			}
 
 			if (b.board[row][col] == black || b.board[row][col] == blackKing) && b.turn == black {
-				moves = append(moves, b.GenerateMovesForPiece(squareNumbers[row][col])...)
+				moves = append(moves, b.generateMovesForPiece(squareNumbers[row][col])...)
 			}
 
 		}
