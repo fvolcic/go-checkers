@@ -250,7 +250,7 @@ func (b *CheckersBoard) GenerateMovesForWhitePeice(piece int) [][]int {
 			currentSquare := piece
 			move := []int{currentSquare, squareNumber}
 			moves = append(moves, move)
-		} else if square == white || square == whiteKing {
+		} else if square == black || square == blackKing {
 			// check if we can jump
 			if b.board[row+2][col+2] == empty {
 
