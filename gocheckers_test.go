@@ -15,18 +15,50 @@ func TestCreateCheckersBoard(t *testing.T) {
 	}
 
 	// Check the board is the right size
-	if len(board.board) != 8 {
+	if len(board.GetUnpaddedBoard()) != 8 {
 		t.Error("Expected board to have 8 rows")
 	}
 
 	for i := 0; i < 8; i++ {
-		if len(board.board[i]) != 8 {
+		if len(board.GetUnpaddedBoard()[i]) != 8 {
 			t.Error("Expected board to have 8 columns")
 		}
 	}
 
 	if board.turn != black {
 		t.Error("Expected black to go first")
+	}
+
+}
+
+func TestGenerateMovesSimple1(t *testing.T) {
+
+	board := NewCheckersBoard()
+
+	moves := board.GenerateMovesForPiece(11)
+
+	if len(moves) != 2 {
+		t.Errorf("Expected 2 movesm got %d", len(moves))
+	}
+
+}
+
+func TestGenerateMovesSimple(t *testing.T) {
+
+	board := NewCheckersBoard()
+
+	moves := board.GenerateMoves()
+
+	if len(moves) != 7 {
+		t.Errorf("Expected 7 moves, got %d", len(moves))
+	}
+
+	board.turn = white
+
+	moves = board.GenerateMoves()
+
+	if len(moves) != 7 {
+		t.Errorf("Expected 7 moves, got %d", len(moves))
 	}
 
 }
