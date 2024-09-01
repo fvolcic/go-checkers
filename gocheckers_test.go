@@ -8,6 +8,7 @@ func TestCreateCheckersBoard(t *testing.T) {
 	board := NewCheckersBoard()
 	if board == nil {
 		t.Error("Expected a non-nil board")
+		t.FailNow()
 	}
 
 	if board.board == nil {

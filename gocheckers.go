@@ -633,6 +633,14 @@ func (b *CheckersBoard) makeMoveHelper(move []int, secondJump bool) bool {
 			b.turn = black
 		}
 
+		if nextRow == 1 || nextRow == 8 {
+			if b.turn == black {
+				b.board[nextRow][nextCol] = blackKing
+			} else {
+				b.board[nextRow][nextCol] = whiteKing
+			}
+		}
+
 		return true
 	} else {
 		b.board[nextRow][nextCol] = b.board[startRow][startCol]
@@ -642,6 +650,14 @@ func (b *CheckersBoard) makeMoveHelper(move []int, secondJump bool) bool {
 		jumpedCol := (startCol + nextCol) / 2
 
 		b.board[jumpedRow][jumpedCol] = empty
+
+		if nextRow == 1 || nextRow == 8 {
+			if b.turn == black {
+				b.board[nextRow][nextCol] = blackKing
+			} else {
+				b.board[nextRow][nextCol] = whiteKing
+			}
+		}
 
 		if len(move) > 2 {
 			remainingSteps := make([]int, len(move)-1)
