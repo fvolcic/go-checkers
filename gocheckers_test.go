@@ -1,6 +1,7 @@
 package gocheckers
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -361,4 +362,33 @@ func TestMakeMove(t *testing.T) {
 		t.Error("Expected next square to be black")
 	}
 
+}
+
+func TestPromote(t *testing.T) {
+	position := [][]int{
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{1, 0, 0, 0, 0, 0, 0, 0},
+		{0, 4, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 2, 0, 2, 0, 2, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+	}
+
+	board := NewCheckersBoardFromPosition(position, black, make([][]int, 0))
+
+	success := board.MakeMove([]int{28, 32})
+
+	if !success {
+		t.Error("Expected successful move")
+	}
+
+	result := board.GetUnpaddedBoard()
+
+	if result[0][1] != blackKing {
+		t.Errorf("Expected black king, got %d", result[0][1])
+	}
+
+	fmt.Println(board.ToString())
 }
