@@ -6,12 +6,12 @@ import "math"
 
 // Define the different square types
 const (
-	invalid   = -1
-	empty     = 0
-	black     = 1
-	white     = 2
-	blackKing = 3
-	whiteKing = 4
+	Invalid   = -1
+	Empty     = 0
+	Black     = 1
+	White     = 2
+	BlackKing = 3
+	WhiteKing = 4
 )
 
 var (
@@ -66,7 +66,7 @@ func NewCheckersBoard() *CheckersBoard {
 	return &CheckersBoard{
 		board,
 		make([][]int, 0),
-		black,
+		Black,
 	}
 }
 
@@ -113,7 +113,8 @@ func (b *CheckersBoard) GetTurn() int {
 	return b.turn
 }
 
-func (b *CheckersBoard) GetUnpaddedBoard() [][]int {
+// Returns a 2D array of the checkers board
+func (b *CheckersBoard) GetBoardData() [][]int {
 	unpaddedBoard := make([][]int, 8)
 
 	for row := 0; row < 8; row++ {
@@ -126,58 +127,75 @@ func (b *CheckersBoard) GetUnpaddedBoard() [][]int {
 	return unpaddedBoard
 }
 
+// Return number of pieces on the board that have the given value
+// Note: Non-King and King pieces are counted separetly. For example, if
+// there are 2 black pieces and 1 black king, then GetPieceCount(Black) will return 2
+func (b *CheckersBoard) GetPieceCount(piece int) int {
+	count := 0
+
+	for row := 1; row < 9; row++ {
+		for col := 1; col < 9; col++ {
+			if b.board[row][col] == piece {
+				count++
+			}
+		}
+	}
+
+	return count
+}
+
 func (b *CheckersBoard) pieceHasJump(piece int) bool {
 	row, col := pieceToIndex(piece)
 
-	pieceColor := black
-	opponentColor := white
-	opponentKingColor := whiteKing
+	pieceColor := Black
+	opponentColor := White
+	opponentKingColor := WhiteKing
 	isKing := false
 
-	if b.board[row][col] == whiteKing || b.board[row][col] == blackKing {
+	if b.board[row][col] == WhiteKing || b.board[row][col] == BlackKing {
 		isKing = true
 	}
 
-	if b.board[row][col] == white || b.board[row][col] == whiteKing {
-		pieceColor = white
-		opponentColor = black
-		opponentKingColor = blackKing
+	if b.board[row][col] == White || b.board[row][col] == WhiteKing {
+		pieceColor = White
+		opponentColor = Black
+		opponentKingColor = BlackKing
 	}
 
 	// check for jumps
 
 	// up and left | piece color black or king
-	if pieceColor == black || isKing {
+	if pieceColor == Black || isKing {
 		pieceOnSquare := b.board[row-1][col-1]
 
-		if (pieceOnSquare == opponentColor || pieceOnSquare == opponentKingColor) && b.board[row-2][col-2] == empty {
+		if (pieceOnSquare == opponentColor || pieceOnSquare == opponentKingColor) && b.board[row-2][col-2] == Empty {
 			return true
 		}
 	}
 
 	// up and right | piece color black or king
-	if pieceColor == black || isKing {
+	if pieceColor == Black || isKing {
 		pieceOnSquare := b.board[row-1][col+1]
 
-		if (pieceOnSquare == opponentColor || pieceOnSquare == opponentKingColor) && b.board[row-2][col+2] == empty {
+		if (pieceOnSquare == opponentColor || pieceOnSquare == opponentKingColor) && b.board[row-2][col+2] == Empty {
 			return true
 		}
 	}
 
 	// down and left | piece color black or king
-	if pieceColor == white || isKing {
+	if pieceColor == White || isKing {
 		pieceOnSquare := b.board[row+1][col-1]
 
-		if (pieceOnSquare == opponentColor || pieceOnSquare == opponentKingColor) && b.board[row+2][col-2] == empty {
+		if (pieceOnSquare == opponentColor || pieceOnSquare == opponentKingColor) && b.board[row+2][col-2] == Empty {
 			return true
 		}
 	}
 
 	// down and right | piece color black or king
-	if pieceColor == white || isKing {
+	if pieceColor == White || isKing {
 		pieceOnSquare := b.board[row+1][col+1]
 
-		if (pieceOnSquare == opponentColor || pieceOnSquare == opponentKingColor) && b.board[row+2][col+2] == empty {
+		if (pieceOnSquare == opponentColor || pieceOnSquare == opponentKingColor) && b.board[row+2][col+2] == Empty {
 			return true
 		}
 	}
@@ -187,12 +205,12 @@ func (b *CheckersBoard) pieceHasJump(piece int) bool {
 }
 
 func (b *CheckersBoard) TurnHasJump() bool {
-	turnColor := black
-	turnKingColor := blackKing
+	turnColor := Black
+	turnKingColor := BlackKing
 
-	if b.turn == white {
-		turnColor = white
-		turnKingColor = whiteKing
+	if b.turn == White {
+		turnColor = White
+		turnKingColor = WhiteKing
 	}
 
 	for row := 1; row < 9; row++ {
@@ -216,27 +234,27 @@ func (b *CheckersBoard) GenerateMovesForKing(piece int, isDoubleJump bool, hasJu
 
 	row, col := pieceToIndex(piece)
 
-	opponentColor := white
-	opponentColorKing := whiteKing
+	opponentColor := White
+	opponentColorKing := WhiteKing
 
-	if b.board[row][col] == white || b.board[row][col] == whiteKing {
-		opponentColor = black
-		opponentColorKing = blackKing
+	if b.board[row][col] == White || b.board[row][col] == WhiteKing {
+		opponentColor = Black
+		opponentColorKing = BlackKing
 	}
 
 	// move up and left
 	square := b.board[row-1][col-1]
-	if square != invalid && square == empty && !isDoubleJump && !hasJump {
+	if square != Invalid && square == Empty && !isDoubleJump && !hasJump {
 		squareNumber := squareNumbers[row-1][col-1]
 		currentSquare := piece
 		move := []int{currentSquare, squareNumber}
 		moves = append(moves, move)
-	} else if (square == opponentColor || square == opponentColorKing) && b.board[row-2][col-2] == empty {
+	} else if (square == opponentColor || square == opponentColorKing) && b.board[row-2][col-2] == Empty {
 		newBoard := b.GenerateDeepCopy()
 
 		newBoard.board[row-2][col-2] = b.board[row][col]
-		newBoard.board[row][col] = empty
-		newBoard.board[row-1][col-1] = empty
+		newBoard.board[row][col] = Empty
+		newBoard.board[row-1][col-1] = Empty
 
 		newSquare := squareNumbers[row-2][col-2]
 
@@ -256,17 +274,17 @@ func (b *CheckersBoard) GenerateMovesForKing(piece int, isDoubleJump bool, hasJu
 
 	// move up and right
 	square = b.board[row-1][col+1]
-	if square != invalid && square == empty && !isDoubleJump && !hasJump {
+	if square != Invalid && square == Empty && !isDoubleJump && !hasJump {
 		squareNumber := squareNumbers[row-1][col+1]
 		currentSquare := piece
 		move := []int{currentSquare, squareNumber}
 		moves = append(moves, move)
-	} else if (square == opponentColor || square == opponentColorKing) && b.board[row-2][col+2] == empty {
+	} else if (square == opponentColor || square == opponentColorKing) && b.board[row-2][col+2] == Empty {
 		newBoard := b.GenerateDeepCopy()
 
 		newBoard.board[row-2][col+2] = b.board[row][col]
-		newBoard.board[row][col] = empty
-		newBoard.board[row-1][col+1] = empty
+		newBoard.board[row][col] = Empty
+		newBoard.board[row-1][col+1] = Empty
 
 		newSquare := squareNumbers[row-2][col+2]
 
@@ -286,17 +304,17 @@ func (b *CheckersBoard) GenerateMovesForKing(piece int, isDoubleJump bool, hasJu
 
 	// move down and left
 	square = b.board[row+1][col-1]
-	if square != invalid && square == empty && !isDoubleJump && !hasJump {
+	if square != Invalid && square == Empty && !isDoubleJump && !hasJump {
 		squareNumber := squareNumbers[row+1][col-1]
 		currentSquare := piece
 		move := []int{currentSquare, squareNumber}
 		moves = append(moves, move)
-	} else if (square == opponentColor || square == opponentColorKing) && b.board[row+2][col-2] == empty {
+	} else if (square == opponentColor || square == opponentColorKing) && b.board[row+2][col-2] == Empty {
 		newBoard := b.GenerateDeepCopy()
 
 		newBoard.board[row+2][col-2] = b.board[row][col]
-		newBoard.board[row][col] = empty
-		newBoard.board[row+1][col-1] = empty
+		newBoard.board[row][col] = Empty
+		newBoard.board[row+1][col-1] = Empty
 
 		newSquare := squareNumbers[row+2][col-2]
 
@@ -316,17 +334,17 @@ func (b *CheckersBoard) GenerateMovesForKing(piece int, isDoubleJump bool, hasJu
 
 	// move down and right
 	square = b.board[row+1][col+1]
-	if square != invalid && square == empty && !isDoubleJump && !hasJump {
+	if square != Invalid && square == Empty && !isDoubleJump && !hasJump {
 		squareNumber := squareNumbers[row+1][col+1]
 		currentSquare := piece
 		move := []int{currentSquare, squareNumber}
 		moves = append(moves, move)
-	} else if (square == opponentColor || square == opponentColorKing) && b.board[row+2][col+2] == empty {
+	} else if (square == opponentColor || square == opponentColorKing) && b.board[row+2][col+2] == Empty {
 		newBoard := b.GenerateDeepCopy()
 
 		newBoard.board[row+2][col+2] = b.board[row][col]
-		newBoard.board[row][col] = empty
-		newBoard.board[row+1][col+1] = empty
+		newBoard.board[row][col] = Empty
+		newBoard.board[row+1][col+1] = Empty
 
 		newSquare := squareNumbers[row+2][col+2]
 
@@ -352,32 +370,32 @@ func (b *CheckersBoard) generateMovesForBlackPiece(piece int, isDoubleJump bool,
 
 	row, col := pieceToIndex(piece)
 
-	if b.board[row][col] == blackKing {
+	if b.board[row][col] == BlackKing {
 		return b.GenerateMovesForKing(piece, isDoubleJump, hasJump)
 	}
 
 	// move up and left
 	square := b.board[row-1][col-1]
-	if square != invalid {
+	if square != Invalid {
 
-		if square == empty && !isDoubleJump && !hasJump {
+		if square == Empty && !isDoubleJump && !hasJump {
 			squareNumber := squareNumbers[row-1][col-1]
 			currentSquare := piece
 			move := []int{currentSquare, squareNumber}
 			moves = append(moves, move)
-		} else if square == white || square == whiteKing {
+		} else if square == White || square == WhiteKing {
 			// check if we can jump
-			if b.board[row-2][col-2] == empty {
+			if b.board[row-2][col-2] == Empty {
 
 				newBoard := b.GenerateDeepCopy() // make a copy of the board
 				newBoard.board[row-2][col-2] = b.board[row][col]
-				newBoard.board[row-1][col-1] = empty
-				newBoard.board[row][col] = empty
+				newBoard.board[row-1][col-1] = Empty
+				newBoard.board[row][col] = Empty
 				newBoardSquare := squareNumbers[row-2][col-2]
 
 				// check if we need to king the piece
 				if row-2 == 1 {
-					newBoard.board[row-2][col-2] = blackKing
+					newBoard.board[row-2][col-2] = BlackKing
 				}
 
 				newBoardMoves := newBoard.generateMovesForBlackPiece(newBoardSquare, true, hasJump)
@@ -400,26 +418,26 @@ func (b *CheckersBoard) generateMovesForBlackPiece(piece int, isDoubleJump bool,
 
 	// move up and right
 	square = b.board[row-1][col+1]
-	if square != invalid {
+	if square != Invalid {
 
-		if square == empty && !isDoubleJump && !hasJump {
+		if square == Empty && !isDoubleJump && !hasJump {
 			squareNumber := squareNumbers[row-1][col+1]
 			currentSquare := piece
 			move := []int{currentSquare, squareNumber}
 			moves = append(moves, move)
-		} else if square == white || square == whiteKing {
+		} else if square == White || square == WhiteKing {
 			// check if we can jump
-			if b.board[row-2][col+2] == empty {
+			if b.board[row-2][col+2] == Empty {
 
 				newBoard := b.GenerateDeepCopy() // make a copy of the board
 				newBoard.board[row-2][col+2] = b.board[row][col]
-				newBoard.board[row-1][col+1] = empty
-				newBoard.board[row][col] = empty
+				newBoard.board[row-1][col+1] = Empty
+				newBoard.board[row][col] = Empty
 				newBoardSquare := squareNumbers[row-2][col+2]
 
 				// check if we need to king the piece
 				if row-2 == 1 {
-					newBoard.board[row-2][col+2] = blackKing
+					newBoard.board[row-2][col+2] = BlackKing
 				}
 
 				newBoardMoves := newBoard.generateMovesForBlackPiece(newBoardSquare, true, hasJump)
@@ -449,32 +467,32 @@ func (b *CheckersBoard) generateMovesForWhitePeice(piece int, isDoubleJump bool,
 
 	row, col := pieceToIndex(piece)
 
-	if b.board[row][col] == whiteKing {
+	if b.board[row][col] == WhiteKing {
 		return b.GenerateMovesForKing(piece, isDoubleJump, hasJump)
 	}
 
 	// move down and left
 	square := b.board[row+1][col-1]
-	if square != invalid {
+	if square != Invalid {
 
-		if square == empty && !isDoubleJump && !hasJump {
+		if square == Empty && !isDoubleJump && !hasJump {
 			squareNumber := squareNumbers[row+1][col-1]
 			currentSquare := piece
 			move := []int{currentSquare, squareNumber}
 			moves = append(moves, move)
-		} else if square == black || square == blackKing {
+		} else if square == Black || square == BlackKing {
 			// check if we can jump
-			if b.board[row+2][col-2] == empty {
+			if b.board[row+2][col-2] == Empty {
 
 				newBoard := b.GenerateDeepCopy() // make a copy of the board
 				newBoard.board[row+2][col-2] = b.board[row][col]
-				newBoard.board[row+1][col-1] = empty
-				newBoard.board[row][col] = empty
+				newBoard.board[row+1][col-1] = Empty
+				newBoard.board[row][col] = Empty
 				newBoardSquare := squareNumbers[row+2][col-2]
 
 				// check if we need to king the piece
 				if row+2 == 8 {
-					newBoard.board[row+2][col-2] = whiteKing
+					newBoard.board[row+2][col-2] = WhiteKing
 				}
 
 				newBoardMoves := newBoard.generateMovesForWhitePeice(newBoardSquare, true, hasJump)
@@ -497,26 +515,26 @@ func (b *CheckersBoard) generateMovesForWhitePeice(piece int, isDoubleJump bool,
 
 	// move down and right
 	square = b.board[row+1][col+1]
-	if square != invalid {
+	if square != Invalid {
 
-		if square == empty && !isDoubleJump && !hasJump {
+		if square == Empty && !isDoubleJump && !hasJump {
 			squareNumber := squareNumbers[row+1][col+1]
 			currentSquare := piece
 			move := []int{currentSquare, squareNumber}
 			moves = append(moves, move)
-		} else if square == black || square == blackKing {
+		} else if square == Black || square == BlackKing {
 			// check if we can jump
-			if b.board[row+2][col+2] == empty {
+			if b.board[row+2][col+2] == Empty {
 
 				newBoard := b.GenerateDeepCopy() // make a copy of the board
 				newBoard.board[row+2][col+2] = b.board[row][col]
-				newBoard.board[row+1][col+1] = empty
-				newBoard.board[row][col] = empty
+				newBoard.board[row+1][col+1] = Empty
+				newBoard.board[row][col] = Empty
 				newBoardSquare := squareNumbers[row+2][col+2]
 
 				// check if we need to king the piece
 				if row+2 == 8 {
-					newBoard.board[row+2][col+2] = whiteKing
+					newBoard.board[row+2][col+2] = WhiteKing
 				}
 
 				newBoardMoves := newBoard.generateMovesForWhitePeice(newBoardSquare, true, hasJump)
@@ -545,11 +563,11 @@ func (b *CheckersBoard) generateMovesForPiece(piece int, isDoubleJump bool, hasJ
 
 	row, col := pieceToIndex(piece)
 
-	if b.board[row][col] == black || b.board[row][col] == blackKing {
+	if b.board[row][col] == Black || b.board[row][col] == BlackKing {
 		return b.generateMovesForBlackPiece(piece, isDoubleJump, hasJump)
 	}
 
-	if b.board[row][col] == white || b.board[row][col] == whiteKing {
+	if b.board[row][col] == White || b.board[row][col] == WhiteKing {
 		return b.generateMovesForWhitePeice(piece, isDoubleJump, hasJump)
 	}
 
@@ -566,11 +584,11 @@ func (b *CheckersBoard) GenerateMoves() [][]int {
 	for row := 0; row < 10; row++ {
 		for col := 0; col < 10; col++ {
 
-			if (b.board[row][col] == white || b.board[row][col] == whiteKing) && b.turn == white {
+			if (b.board[row][col] == White || b.board[row][col] == WhiteKing) && b.turn == White {
 				moves = append(moves, b.generateMovesForPiece(squareNumbers[row][col], false, hasJump)...)
 			}
 
-			if (b.board[row][col] == black || b.board[row][col] == blackKing) && b.turn == black {
+			if (b.board[row][col] == Black || b.board[row][col] == BlackKing) && b.turn == Black {
 				moves = append(moves, b.generateMovesForPiece(squareNumbers[row][col], false, hasJump)...)
 			}
 
@@ -623,39 +641,39 @@ func (b *CheckersBoard) makeMoveHelper(move []int, secondJump bool) bool {
 
 	if math.Abs(float64(startRow-nextRow)) == 1 {
 		b.board[nextRow][nextCol] = b.board[startRow][startCol]
-		b.board[startRow][startCol] = empty
+		b.board[startRow][startCol] = Empty
 
 		b.moves = append(b.moves, move)
 
 		if nextRow == 1 || nextRow == 8 {
-			if b.turn == black {
-				b.board[nextRow][nextCol] = blackKing
+			if b.turn == Black {
+				b.board[nextRow][nextCol] = BlackKing
 			} else {
-				b.board[nextRow][nextCol] = whiteKing
+				b.board[nextRow][nextCol] = WhiteKing
 			}
 		}
 
-		if b.turn == black {
-			b.turn = white
+		if b.turn == Black {
+			b.turn = White
 		} else {
-			b.turn = black
+			b.turn = Black
 		}
 
 		return true
 	} else {
 		b.board[nextRow][nextCol] = b.board[startRow][startCol]
-		b.board[startRow][startCol] = empty
+		b.board[startRow][startCol] = Empty
 
 		jumpedRow := (startRow + nextRow) / 2
 		jumpedCol := (startCol + nextCol) / 2
 
-		b.board[jumpedRow][jumpedCol] = empty
+		b.board[jumpedRow][jumpedCol] = Empty
 
 		if nextRow == 1 || nextRow == 8 {
-			if b.turn == black {
-				b.board[nextRow][nextCol] = blackKing
+			if b.turn == Black {
+				b.board[nextRow][nextCol] = BlackKing
 			} else {
-				b.board[nextRow][nextCol] = whiteKing
+				b.board[nextRow][nextCol] = WhiteKing
 			}
 		}
 
@@ -671,10 +689,10 @@ func (b *CheckersBoard) makeMoveHelper(move []int, secondJump bool) bool {
 		if !secondJump {
 			b.moves = append(b.moves, move)
 
-			if b.turn == black {
-				b.turn = white
+			if b.turn == Black {
+				b.turn = White
 			} else {
-				b.turn = black
+				b.turn = Black
 			}
 
 		}
@@ -691,13 +709,13 @@ func (b *CheckersBoard) ToString() string {
 	for row := 1; row < 9; row++ {
 		for col := 1; col < 9; col++ {
 			switch b.board[row][col] {
-			case black:
+			case Black:
 				boardStr += " b"
-			case white:
+			case White:
 				boardStr += " w"
-			case blackKing:
+			case BlackKing:
 				boardStr += " B"
-			case whiteKing:
+			case WhiteKing:
 				boardStr += " W"
 			default:
 				boardStr += " _"

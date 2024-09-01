@@ -16,17 +16,17 @@ func TestCreateCheckersBoard(t *testing.T) {
 	}
 
 	// Check the board is the right size
-	if len(board.GetUnpaddedBoard()) != 8 {
+	if len(board.GetBoardData()) != 8 {
 		t.Error("Expected board to have 8 rows")
 	}
 
 	for i := 0; i < 8; i++ {
-		if len(board.GetUnpaddedBoard()[i]) != 8 {
+		if len(board.GetBoardData()[i]) != 8 {
 			t.Error("Expected board to have 8 columns")
 		}
 	}
 
-	if board.turn != black {
+	if board.turn != Black {
 		t.Error("Expected black to go first")
 	}
 
@@ -56,7 +56,7 @@ func TestGenerateMovesSimple(t *testing.T) {
 		t.Errorf("Expected 7 moves, got %d", len(moves))
 	}
 
-	board.turn = white
+	board.turn = White
 
 	moves = board.GenerateMoves()
 
@@ -78,7 +78,7 @@ func TestGenerateMovesFromPosition(t *testing.T) {
 		{1, 0, 0, 0, 0, 0, 0, 0},
 	}
 
-	board := NewCheckersBoardFromPosition(position, black, make([][]int, 0))
+	board := NewCheckersBoardFromPosition(position, Black, make([][]int, 0))
 
 	numMoves := len(board.GenerateMoves())
 
@@ -97,7 +97,7 @@ func TestGenerateMovesFromPosition(t *testing.T) {
 		{1, 0, 0, 0, 0, 0, 0, 0},
 	}
 
-	board = NewCheckersBoardFromPosition(position, black, make([][]int, 0))
+	board = NewCheckersBoardFromPosition(position, Black, make([][]int, 0))
 
 	numMoves = len(board.GenerateMoves())
 
@@ -119,7 +119,7 @@ func TestGenerateMovesWithKing(t *testing.T) {
 		{0, 0, 0, 0, 0, 0, 0, 0},
 	}
 
-	board := NewCheckersBoardFromPosition(position, black, make([][]int, 0))
+	board := NewCheckersBoardFromPosition(position, Black, make([][]int, 0))
 
 	moves := board.GenerateMoves()
 
@@ -152,7 +152,7 @@ func TestGenerateMovesWithKing(t *testing.T) {
 		{0, 0, 0, 0, 0, 0, 0, 0},
 	}
 
-	board = NewCheckersBoardFromPosition(position, black, make([][]int, 0))
+	board = NewCheckersBoardFromPosition(position, Black, make([][]int, 0))
 
 	moves = board.GenerateMoves()
 
@@ -199,7 +199,7 @@ func TestSingleOptionMoves(t *testing.T) {
 			{0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0},
 		},
-			black,
+			Black,
 		},
 
 		{[][]int{
@@ -212,7 +212,7 @@ func TestSingleOptionMoves(t *testing.T) {
 			{0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0},
 		},
-			black,
+			Black,
 		},
 
 		{[][]int{
@@ -225,7 +225,7 @@ func TestSingleOptionMoves(t *testing.T) {
 			{0, 1, 0, 0, 0, 0, 0, 0},
 			{4, 0, 0, 0, 0, 0, 0, 0},
 		},
-			white,
+			White,
 		},
 
 		{[][]int{
@@ -238,7 +238,7 @@ func TestSingleOptionMoves(t *testing.T) {
 			{0, 1, 0, 0, 0, 0, 0, 0},
 			{0, 0, 4, 0, 0, 0, 0, 0},
 		},
-			white,
+			White,
 		},
 	}
 
@@ -275,7 +275,7 @@ func TestDoubleJumpToKing(t *testing.T) {
 			{0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0},
 		},
-			black,
+			Black,
 		},
 
 		{[][]int{
@@ -288,7 +288,7 @@ func TestDoubleJumpToKing(t *testing.T) {
 			{0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0},
 		},
-			black,
+			Black,
 		},
 
 		{[][]int{
@@ -301,7 +301,7 @@ func TestDoubleJumpToKing(t *testing.T) {
 			{0, 1, 0, 1, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0},
 		},
-			white,
+			White,
 		},
 
 		{[][]int{
@@ -314,7 +314,7 @@ func TestDoubleJumpToKing(t *testing.T) {
 			{0, 1, 0, 1, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0},
 		},
-			white,
+			White,
 		},
 	}
 
@@ -345,19 +345,19 @@ func TestMakeMove(t *testing.T) {
 		{1, 0, 0, 0, 0, 0, 0, 0},
 	}
 
-	board := NewCheckersBoardFromPosition(position, black, make([][]int, 0))
+	board := NewCheckersBoardFromPosition(position, Black, make([][]int, 0))
 
 	if !board.MakeMove([]int{4, 8}) {
 		t.Errorf("Expected sucesssful move")
 	}
 
-	result := board.GetUnpaddedBoard()
+	result := board.GetBoardData()
 
-	if result[7][0] != empty {
+	if result[7][0] != Empty {
 		t.Error("Expected starting square to be empty")
 	}
 
-	if result[6][1] != black {
+	if result[6][1] != Black {
 		t.Error("Expected next square to be black")
 	}
 
@@ -375,7 +375,7 @@ func TestPromote(t *testing.T) {
 		{0, 0, 0, 0, 0, 0, 0, 0},
 	}
 
-	board := NewCheckersBoardFromPosition(position, black, make([][]int, 0))
+	board := NewCheckersBoardFromPosition(position, Black, make([][]int, 0))
 
 	success := board.MakeMove([]int{28, 32})
 
@@ -383,9 +383,22 @@ func TestPromote(t *testing.T) {
 		t.Error("Expected successful move")
 	}
 
-	result := board.GetUnpaddedBoard()
+	result := board.GetBoardData()
 
-	if result[0][1] != blackKing {
+	if result[0][1] != BlackKing {
 		t.Errorf("Expected black king, got %d", result[0][1])
+	}
+
+	// check the piece count to make sure all is good
+	if board.GetPieceCount(White) != 3 {
+		t.Errorf("Expected 4 white pieces, got %d", board.GetPieceCount(White))
+	}
+
+	if board.GetPieceCount(WhiteKing) != 1 {
+		t.Errorf("Expected 1 white king, got %d", board.GetPieceCount(White))
+	}
+
+	if board.GetPieceCount(BlackKing) != 1 {
+		t.Errorf("Expected 1 black king, got %d", board.GetPieceCount(White))
 	}
 }
