@@ -627,18 +627,18 @@ func (b *CheckersBoard) makeMoveHelper(move []int, secondJump bool) bool {
 
 		b.moves = append(b.moves, move)
 
-		if b.turn == black {
-			b.turn = white
-		} else {
-			b.turn = black
-		}
-
 		if nextRow == 1 || nextRow == 8 {
 			if b.turn == black {
 				b.board[nextRow][nextCol] = blackKing
 			} else {
 				b.board[nextRow][nextCol] = whiteKing
 			}
+		}
+
+		if b.turn == black {
+			b.turn = white
+		} else {
+			b.turn = black
 		}
 
 		return true

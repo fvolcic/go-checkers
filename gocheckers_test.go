@@ -1,7 +1,6 @@
 package gocheckers
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -389,6 +388,4 @@ func TestPromote(t *testing.T) {
 	if result[0][1] != blackKing {
 		t.Errorf("Expected black king, got %d", result[0][1])
 	}
-
-	fmt.Println(board.ToString())
 }
