@@ -204,7 +204,7 @@ func (b *CheckersBoard) pieceHasJump(piece int) bool {
 
 }
 
-func (b *CheckersBoard) TurnHasJump() bool {
+func (b *CheckersBoard) turnHasJump() bool {
 	turnColor := Black
 	turnKingColor := BlackKing
 
@@ -229,7 +229,7 @@ func (b *CheckersBoard) TurnHasJump() bool {
 	return false
 }
 
-func (b *CheckersBoard) GenerateMovesForKing(piece int, isDoubleJump bool, hasJump bool) [][]int {
+func (b *CheckersBoard) generateMovesForKing(piece int, isDoubleJump bool, hasJump bool) [][]int {
 	moves := make([][]int, 0)
 
 	row, col := pieceToIndex(piece)
@@ -258,7 +258,7 @@ func (b *CheckersBoard) GenerateMovesForKing(piece int, isDoubleJump bool, hasJu
 
 		newSquare := squareNumbers[row-2][col-2]
 
-		newBoardMoves := newBoard.GenerateMovesForKing(newSquare, true, hasJump)
+		newBoardMoves := newBoard.generateMovesForKing(newSquare, true, hasJump)
 
 		// If there are no double jumps, then add the single jump to the list
 		if len(newBoardMoves) == 0 {
@@ -288,7 +288,7 @@ func (b *CheckersBoard) GenerateMovesForKing(piece int, isDoubleJump bool, hasJu
 
 		newSquare := squareNumbers[row-2][col+2]
 
-		newBoardMoves := newBoard.GenerateMovesForKing(newSquare, true, hasJump)
+		newBoardMoves := newBoard.generateMovesForKing(newSquare, true, hasJump)
 
 		// If there are no double jumps, then add the single jump to the list
 		if len(newBoardMoves) == 0 {
@@ -318,7 +318,7 @@ func (b *CheckersBoard) GenerateMovesForKing(piece int, isDoubleJump bool, hasJu
 
 		newSquare := squareNumbers[row+2][col-2]
 
-		newBoardMoves := newBoard.GenerateMovesForKing(newSquare, true, hasJump)
+		newBoardMoves := newBoard.generateMovesForKing(newSquare, true, hasJump)
 
 		// If there are no double jumps, then add the single jump to the list
 		if len(newBoardMoves) == 0 {
@@ -348,7 +348,7 @@ func (b *CheckersBoard) GenerateMovesForKing(piece int, isDoubleJump bool, hasJu
 
 		newSquare := squareNumbers[row+2][col+2]
 
-		newBoardMoves := newBoard.GenerateMovesForKing(newSquare, true, hasJump)
+		newBoardMoves := newBoard.generateMovesForKing(newSquare, true, hasJump)
 
 		// If there are no double jumps, then add the single jump to the list
 		if len(newBoardMoves) == 0 {
@@ -371,7 +371,7 @@ func (b *CheckersBoard) generateMovesForBlackPiece(piece int, isDoubleJump bool,
 	row, col := pieceToIndex(piece)
 
 	if b.board[row][col] == BlackKing {
-		return b.GenerateMovesForKing(piece, isDoubleJump, hasJump)
+		return b.generateMovesForKing(piece, isDoubleJump, hasJump)
 	}
 
 	// move up and left
@@ -468,7 +468,7 @@ func (b *CheckersBoard) generateMovesForWhitePeice(piece int, isDoubleJump bool,
 	row, col := pieceToIndex(piece)
 
 	if b.board[row][col] == WhiteKing {
-		return b.GenerateMovesForKing(piece, isDoubleJump, hasJump)
+		return b.generateMovesForKing(piece, isDoubleJump, hasJump)
 	}
 
 	// move down and left
@@ -579,7 +579,7 @@ func (b *CheckersBoard) GenerateMoves() [][]int {
 
 	moves := make([][]int, 0)
 
-	hasJump := b.TurnHasJump()
+	hasJump := b.turnHasJump()
 
 	for row := 0; row < 10; row++ {
 		for col := 0; col < 10; col++ {

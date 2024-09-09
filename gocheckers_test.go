@@ -36,7 +36,7 @@ func TestGenerateMovesSimple1(t *testing.T) {
 
 	board := NewCheckersBoard()
 
-	hasJump := board.TurnHasJump()
+	hasJump := board.turnHasJump()
 
 	moves := board.generateMovesForPiece(11, false, hasJump)
 
