@@ -421,3 +421,36 @@ func TestGameIsOver(t *testing.T) {
 		t.Error("Expected game to be over")
 	}
 }
+
+func TestMakeMoveAndGetMoveHistory(t *testing.T) {
+	madeMoves := make([][]int, 0)
+
+	board := NewCheckersBoard()
+
+	for i := 0; i < 5; i++ {
+		moves := board.GenerateMoves()
+
+		if len(moves) == 0 {
+			break
+		}
+
+		move := moves[0]
+
+		madeMoves = append(madeMoves, move)
+
+		board.MakeMove(move)
+	}
+
+	if len(madeMoves) != len(board.GetGameMoveHistory()) {
+		t.Errorf("Expected %d moves, got %d", len(madeMoves), len(board.GetGameMoveHistory()))
+	}
+
+	for i, move := range madeMoves {
+		for j, square := range move {
+			if board.GetGameMoveHistory()[i][j] != square {
+				t.Errorf("Expected %d, got %d", square, board.GetGameMoveHistory()[i][j])
+			}
+		}
+	}
+
+}

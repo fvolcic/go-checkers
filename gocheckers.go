@@ -1,6 +1,8 @@
 package gocheckers
 
-import "math"
+import (
+	"math"
+)
 
 // define an enum type
 
@@ -605,7 +607,13 @@ func (b *CheckersBoard) GenerateMoves() [][]int {
 }
 
 func (b *CheckersBoard) MakeMove(move []int) bool {
-	return b.makeMoveHelper(move, false)
+	moveSuccess := b.makeMoveHelper(move, false)
+
+	if moveSuccess {
+		b.moves = append(b.moves, move)
+	}
+
+	return moveSuccess
 }
 
 func (b *CheckersBoard) makeMoveHelper(move []int, secondJump bool) bool {
@@ -647,8 +655,6 @@ func (b *CheckersBoard) makeMoveHelper(move []int, secondJump bool) bool {
 	if math.Abs(float64(startRow-nextRow)) == 1 {
 		b.board[nextRow][nextCol] = b.board[startRow][startCol]
 		b.board[startRow][startCol] = Empty
-
-		b.moves = append(b.moves, move)
 
 		if nextRow == 1 || nextRow == 8 {
 			if b.turn == Black {
@@ -692,7 +698,6 @@ func (b *CheckersBoard) makeMoveHelper(move []int, secondJump bool) bool {
 		}
 
 		if !secondJump {
-			b.moves = append(b.moves, move)
 
 			if b.turn == Black {
 				b.turn = White
@@ -705,6 +710,11 @@ func (b *CheckersBoard) makeMoveHelper(move []int, secondJump bool) bool {
 		return true
 	}
 
+}
+
+// Return a copy of the moves that have been made.
+func (b *CheckersBoard) GetGameMoveHistory() [][]int {
+	return b.moves
 }
 
 func (b *CheckersBoard) ToString() string {
