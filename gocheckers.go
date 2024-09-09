@@ -144,6 +144,11 @@ func (b *CheckersBoard) GetPieceCount(piece int) int {
 	return count
 }
 
+// Returns true if the game is over. A game is over if there are no possible moves
+func (b *CheckersBoard) GameOver() bool {
+	return len(b.GenerateMoves()) == 0
+}
+
 func (b *CheckersBoard) pieceHasJump(piece int) bool {
 	row, col := pieceToIndex(piece)
 

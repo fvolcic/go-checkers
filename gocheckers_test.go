@@ -402,3 +402,22 @@ func TestPromote(t *testing.T) {
 		t.Errorf("Expected 1 black king, got %d", board.GetPieceCount(White))
 	}
 }
+
+func TestGameIsOver(t *testing.T) {
+	position := [][]int{
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 2, 0, 0, 0, 2, 0, 0},
+		{0, 0, 2, 0, 2, 0, 0, 0},
+		{0, 0, 0, 1, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+	}
+
+	board := NewCheckersBoardFromPosition(position, Black, make([][]int, 0))
+
+	if !board.GameOver() {
+		t.Error("Expected game to be over")
+	}
+}
